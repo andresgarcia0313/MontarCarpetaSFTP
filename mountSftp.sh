@@ -31,7 +31,9 @@ printMessage "Bienvenido" "INFO"
 sudo -v
 
 printMessage "Validando software necesario" "INFO"
-sudo apt install sshfs -y
+if ! command -v sshfs &> /dev/null; then
+    sudo apt install sshfs -y
+fi
 
 printMessage "Verificando si el punto de montaje local existe" "INFO"
 mkdir -p "$local_mount_point"
@@ -39,7 +41,10 @@ mkdir -p "$local_mount_point"
 printMessage "Activando el uso de la carpeta remota como si fuera local." "INFO"
 sshfs "$remote_mount_point" "$local_mount_point" -o IdentityFile="$identity_file"
 
-printMessage "Verificando el resultado del montaje" "INFO"
+# Imprime el comando ejecutado
+printMessage "Comando ejecutado: sshfs $remote_mount_point $local_mount_point -o IdentityFile=$identity_file" "WARNING"
+
+printMessage "Verificando el resultado de configuración" "INFO"
 
 if [ $? -eq 0 ]; then
     printMessage "Montaje exitoso en $local_mount_point" "INFO"
